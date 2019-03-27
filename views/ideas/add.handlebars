@@ -1,0 +1,9 @@
+{{#each errors}}
+<div>{{text}}</div>
+{{/each}}
+
+<form action="/ideas" method="post">
+    <input type="text" placeholder="主题" name="title" value="{{tit}}"><br>
+    <textarea type="text" placeholder="描述" name="detail">{{detail}}</textarea><br>
+    <button type="submit">添加</button>
+</form>

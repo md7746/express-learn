@@ -1,0 +1,12 @@
+{{#each ideas}}
+    <h3>{{title}}</h3>
+    <p>{{detail}}</p>
+    <p><a href="/ideas/edit/{{id}}">编辑</a></p>
+    <form action="/ideas/{{id}}?_method=DELETE" method="post">
+        <input type="hidden" name="method" value="DELETE">
+        <input type="submit" value="删除">
+    </form>
+    <br>
+{{else}}
+    <p>还没有添加项</p>
+{{/each}}
