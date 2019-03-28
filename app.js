@@ -1,10 +1,12 @@
 const express = require('express');
+const path = require('path');
 const exphds = require('express-handlebars');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const flash = require('connect-flash');
+const passport = require('passport');
 
 const app = new express();
 
@@ -24,7 +26,7 @@ app.engine('handlebars', exphds({
 }));
 app.set('view engine', 'handlebars');
 
-
+app.use(express.static(path.join(__dirname,'assets')));
 
 app.use(methodOverride('_method'));
 

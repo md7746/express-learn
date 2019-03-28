@@ -23,7 +23,6 @@ router.get('/', (req, res) => {
 
 router.get('/add', (req, res) => {
     const title = '添加课程';
-    req.flash('success_msg','添加成功');
     res.render('ideas/add', { title })
 })
 
