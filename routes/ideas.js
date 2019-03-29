@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+const {valitation} = require('../verify/valitation');
+
 const router = express.Router();
 
 const jsonParser = bodyParser.json();
@@ -10,9 +12,9 @@ const urlencodeParser = bodyParser.urlencoded({ extends: false });
 require('../models/idea');
 const idea = mongoose.model('ideas');
 
-router.get('/', (req, res) => {
+router.get('/',valitation, (req, res) => {
     const title = '课程列表';
-    idea.find({}).sort({ date: 'desc' })
+    idea.find({user:req.user.id}).sort({ date: 'desc' })
         .then(ideas => {
             res.render('ideas/index', {
                 title,
@@ -21,21 +23,27 @@ router.get('/', (req, res) => {
         })
 })
 
-router.get('/add', (req, res) => {
+router.get('/add',valitation, (req, res) => {
     const title = '添加课程';
     res.render('ideas/add', { title })
 })
 
-router.get('/edit/:id', (req, res) => {
+router.get('/edit/:id',valitation, (req, res) => {
     const title = '编辑课程';
     idea.findOne({ _id: req.params.id })
         .then(idea => {
-            res.render('ideas/edit', {
-                title,
-                tit: idea.title,
-                detail: idea.detail,
-                id: idea._id
-            })
+            if(idea.user === req.user.id){
+                res.render('ideas/edit', {
+                    title,
+                    tit: idea.title,
+                    detail: idea.detail,
+                    id: idea._id
+                })
+            }else{
+                req.flash('err_msg','非法操作！！！');
+                res.redirect('/users/login');
+            }
+            
         })
         .catch(err => {
             console.log(err)
@@ -95,7 +103,8 @@ router.post('/', urlencodeParser, (req, res) => {
     } else {
         const newIdea = {
             title: req.body.title,
-            detail: req.body.detail
+            detail: req.body.detail,
+            user:req.user.id
         }
         new idea(newIdea).save()
             .then(idea => {

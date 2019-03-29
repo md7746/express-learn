@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const passport = require('passport');
 
 const router = express.Router();
 
@@ -16,26 +17,31 @@ router.get('/login', (req, res) => {
     res.render('users/login', { title })
 })
 
-router.post('/login',urlencodeParser,(req,res)=>{
-    users.findOne({email:req.body.email})
-        .then(user=>{
-            if(!user){
-                req.flash('err_msg','用户不存在');
-                res.redirect('/users/login');
-            }else{
-                bcrypt.compare(req.body.password, user.password, function(err, isMath) {
-                    if(err) throw err;
-                    if(isMath){
-                        req.flash('success_msg','登录成功');
-                        res.redirect('/ideas');
-                    }else{
-                        req.flash('err_msg','密码错误');
-                        res.redirect('/users/login');
-                    }
-                    
-                });
-            }
-        })
+router.post('/login', urlencodeParser, (req, res, next) => {
+    passport.authenticate('local', {
+        successRedirect: '/ideas',
+        failureRedirect: '/users/login',
+        failureFlash: true
+    })(req, res, next);
+    // users.findOne({email:req.body.email})
+    //     .then(user=>{
+    //         if(!user){
+    //             req.flash('err_msg','用户不存在');
+    //             res.redirect('/users/login');
+    //         }else{
+    //             bcrypt.compare(req.body.password, user.password, function(err, isMath) {
+    //                 if(err) throw err;
+    //                 if(isMath){
+    //                     req.flash('success_msg','登录成功');
+    //                     res.redirect('/ideas');
+    //                 }else{
+    //                     req.flash('err_msg','密码错误');
+    //                     res.redirect('/users/login');
+    //                 }
+
+    //             });
+    //         }
+    //     })
 })
 
 router.get("/register", (req, res) => {
@@ -88,6 +94,12 @@ router.post('/register', urlencodeParser, (req, res) => {
             })
         });
     }
+})
+
+router.get('/logout', (req, res) => {
+    req.logOut();
+    req.flash('success_msg', '退出登录成功');
+    res.redirect('/users/login');
 })
 
 module.exports = router;

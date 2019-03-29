@@ -4,7 +4,11 @@
         <li><a href="/about">about</a></li>
     </ul>
 </nav>
+{{#if user}}
 <a href="/ideas" style="float:right">所有项</a><br>
 <a href="/ideas/add" style="float:right">添加一项</a><br>
+<a href="/users/logout" style="float:right">退出</a><br>
+{{else}}
 <a href="/users/login" style="float:right">登录</a><br>
 <a href="/users/register" style="float:right">注册</a>
+{{/if}}

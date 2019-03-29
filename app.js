@@ -38,14 +38,21 @@ app.use(session({
 
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use((req,res,next)=>{
     res.locals.success_msg = req.flash('success_msg');
     res.locals.err_msg = req.flash('err_msg');
+    res.locals.error = req.flash('error');
+    res.locals.user = req.user || null;
     next();
 })
 
 app.use('/ideas',ideas);
 app.use('/users',users);
+
+require('./verify/user')(passport);
 
 const port = 5000;
 app.listen(port, () => {
